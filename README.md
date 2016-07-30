@@ -122,3 +122,25 @@ create index
 ```
 create index idx_sampletable_id on SampleTable(id);
 ```
+######Unique Constraint and Catalog Tables
+```
+alter table sampletable add constraint sampletable_firstcol unique(firstcol);
+```
+exclipitly
+```
+create unique index unq_sampletable_firstcol on sampletable(firstcol);
+```
+######Case Insensitive Search
+change table accept insensive search
+```
+select * from film where lower(title) = lower('arizona');
+```
+but perf is not good
+###### Case Insensitive Search and Performance
+```
+create index film_title_search_lower on film (lower(title));
+```
+###### Partial Index
+````
+create index film_first on film(length) where length<60;
+```
