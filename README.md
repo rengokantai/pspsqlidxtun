@@ -144,3 +144,30 @@ create index film_title_search_lower on film (lower(title));
 ````
 create index film_first on film(length) where length<60;
 ```
+#####Large Database
+######Disable Autocommit
+create table
+```
+create table ke(
+film_id integer not null,
+title character varying(255) not null,
+description text,
+release_year year,
+language_id smallint not null,
+rental_rate numeric(4,2) default 1.11 not null,
+last_update timestamp without time zone default now() not null,
+fulltext tsvector not null
+);
+```
+######Copy Command
+```
+copy ke to stdout;
+copy ke to stdout(delimiter ',');
+```
+save csv
+```
+copy ke to 'd:/ke.csv' csv
+copy ke to 'd:/ke.csv' csv header  #with header
+copy ke from 'd:/ke.csv' delimiters ','
+```
+######Summary
