@@ -27,6 +27,11 @@ edit
 host    all             all          0.0.0.0/0               md5
 host    all             all             ::/0                 md5
 ```
+enable iptables
+```
+iptables -A INPUT -p tcp -m tcp --dport 5432 -j ACCEPT
+iptables -A OUTPUT -p tcp -m tcp --dport 5432 -j ACCEPT
+```
 then import data
 ```
 wget http://bit.ly/pagilia-dl -O test.zip
@@ -41,6 +46,48 @@ select relpages,reltuples from pg_class where relname='film';  -- 54,1000
 ```
 seq_page_cost = estimate of the cost of a disk page fetch,default=1
 cpu_tuple_cost = estimate of the cost of processing each row,default=0.01
-```
 hence total = 54*0.1 +10=64
 
+######Query Plan and Conditions
+where clause: id < 10: index cond(index scan)
+id> 10: filter(seq scan)
+
+#####Query Performance with Indexes
+######Types of Indexes
+btree  
+hash  
+generalized inverted index(gin)
+generalized search tree index(gist)
+######Btree
+```
+< > = <= BETWEEN IN
+```
+######B-Tree Index - Disadvantages
+inserting slower data (insert,delete,update)
+######Multicolumn Index and Cover Index
+maximum 32 columns
+######Index and Improved Performance
+basic
+```
+select title,length,rating,replacement_cost,rental_rate from film where length between 60 and 70 and rating = 'G';
+```
+create index
+```
+create index idx_film_length ON film(length);
+```
+######Multicolumn Index
+```
+create index idx_film_length_rating ON film(length,rating);
+```
+analyze it:
+```
+explain analyze select title,length,rating,replacement_cost,rental_rate from film where length between 60 and 70 and rating = 'G';
+```
+check Heap Blocks = x (the small the better)
+######Order of Column in Index
+first: heap scan second:filter
+######Index Maintenance with REINDEX
+```
+REINDEX INDEX idx_film_cover; / DROP INDEX idx_film_length;
+REINDEX TABLE film;
+```
