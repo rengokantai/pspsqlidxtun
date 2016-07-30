@@ -171,3 +171,7 @@ copy ke to 'd:/ke.csv' csv header  #with header
 copy ke from 'd:/ke.csv' delimiters ','
 ```
 ######Summary
+######VACUUM Command(garbage collection)
+```
+vacuum verbose ke;
+```
