@@ -91,3 +91,34 @@ first: heap scan second:filter
 REINDEX INDEX idx_film_cover; / DROP INDEX idx_film_length;
 REINDEX TABLE film;
 ```
+#####Complex Queries
+######Difference Between Key, Index, and Constraint
+postgres automatically creates a unique index when a unique constraint or primary key is defined on table
+######Demo: Unique Index
+create a new table
+```
+create table SampleTable(
+id integer primary key,
+firstcol character varying(30),
+secondcol integer
+);
+```
+click constraints,you can see `sampletable_pkey`
+```
+ALTER TABLE public.sampletable ADD CONSTRAINT sampletable_pkey PRIMARY KEY(id);
+```
+we cannot see any index.
+######Primary Key Constraint and Catalog Tables
+show all indexes(including invisible constraint index)
+```
+select idx.indrelid :: REGCLASS as table_name,
+i.relname as index.name,
+idx.indisunique as is_unique,
+idx.indisprimary as is_primary
+from pg_index as idx join pg_class as i on i.old = idx.indexrelid
+where idx.indrelid = 'sampletable'::reglcass;
+```
+create index
+```
+create index idx_sampletable_id on SampleTable(id);
+```
